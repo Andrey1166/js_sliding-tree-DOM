@@ -8,35 +8,45 @@ lists.forEach((list) => {
   const span = document.createElement('span');
 
   if (parentLi) {
-    span.textContent = parentLi.firstChild.textContent;
+    const textNode = Array.from(parentLi.childNodes).find(
+      (n) => n.nodeType === Node.TEXT_NODE && n.textContent.trim(),
+    );
+
+    if (textNode) {
+      span.textContent = textNode.textContent;
+    }
     span.setAttribute('class', 'header');
     parentLi.firstChild.textContent = '';
     parentLi.prepend(span);
-    console.log(parentLi);
   }
 });
 
-tree.addEventListener('click', (e) => {
-  const header = e.target.closest('.header');
+if (tree) {
+  tree.addEventListener('click', (e) => {
+    const targetEl =
+      e.target instanceof Element ? e.target : e.target.parentElement;
+    const header = targetEl && targetEl.closest('.header');
 
-  if (!header) {
-    return;
-  } else{
-    listHandler(header);
-  }
-  console.log(header.nextElementSibling.clientHeight);
-});
+    if (header) {
+      listHandler(header);
+    }
+  });
+}
 
 function listHandler(item) {
   const list = item.nextElementSibling;
 
+  if (!list || list.tagName !== 'UL') {
+    return;
+  }
+
   if (list.clientHeight > 0) {
     list.style.height = '0';
     list.style.opacity = '0';
-    list.pointerEvent = 'none';
+    list.style.pointerEvents = 'none';
   } else {
     list.style.height = '100%';
     list.style.opacity = '1';
-    list.pointerEvent = 'all';
+    list.style.pointerEvents = 'auto';
   }
 }
