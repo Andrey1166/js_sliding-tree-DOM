@@ -5,7 +5,6 @@ const lists = [...document.querySelectorAll('ul')];
 
 lists.forEach((list) => {
   const parentLi = list.closest('li');
-  const span = document.createElement('span');
 
   if (parentLi) {
     const textNode = Array.from(parentLi.childNodes).find(
@@ -13,11 +12,13 @@ lists.forEach((list) => {
     );
 
     if (textNode) {
+      const span = document.createElement('span');
+
       span.textContent = textNode.textContent;
+      span.setAttribute('class', 'header');
+      textNode.textContent = '';
+      parentLi.prepend(span);
     }
-    span.setAttribute('class', 'header');
-    parentLi.firstChild.textContent = '';
-    parentLi.prepend(span);
   }
 });
 
@@ -26,6 +27,10 @@ if (tree) {
     const targetEl =
       e.target instanceof Element ? e.target : e.target.parentElement;
     const header = targetEl && targetEl.closest('.header');
+
+    if (!targetEl) {
+      return;
+    }
 
     if (header) {
       listHandler(header);
@@ -41,11 +46,11 @@ function listHandler(item) {
   }
 
   if (list.clientHeight > 0) {
-    list.style.height = '0';
+    list.style.maxHeight = '0';
     list.style.opacity = '0';
     list.style.pointerEvents = 'none';
   } else {
-    list.style.height = '100%';
+    list.style.maxHeight = '100%';
     list.style.opacity = '1';
     list.style.pointerEvents = 'auto';
   }
